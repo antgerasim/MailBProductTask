@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MailBProductTask.Helpers;
+using MailBProductTask.Installers;
 using MailBProductTask.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +29,7 @@ namespace MailBProductTask
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.InstallServicesInAssembly(Configuration);
             services.AddCors();
             services.AddControllers();
 
@@ -34,8 +37,7 @@ namespace MailBProductTask
             services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
-            // configure DI for application services
-            services.AddScoped<IProductService, ProductService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

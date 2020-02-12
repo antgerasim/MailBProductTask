@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using MailBProductTask.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,8 @@ namespace MailBProductTask.Installers
     {
         public void InstallServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped(typeof(ITravelDataService<,>), typeof(TravelDataService<,>));
+            services.AddScoped<IClientService, ClientService>();
+            services.AddScoped<IProductService, ProductService>();
         }
     }
 }
