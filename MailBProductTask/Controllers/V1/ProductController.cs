@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MailBProductTask.Helpers.Tweetbook.Contracts.V1;
+﻿using MailBProductTask.Helpers.Tweetbook.Contracts.V1;
 using MailBProductTask.Models;
 using MailBProductTask.Services;
 using MailBProductTask.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace MailBProductTask.Controllers.V1
 {
@@ -52,20 +51,11 @@ namespace MailBProductTask.Controllers.V1
             return Ok(new Response<ProductResponse>(200, response));
         }
 
-        // POST: api/Product
-        //[HttpPost]
-        [HttpPost(ApiRoutes.Product.Create)] //api/v1/products
-        //[ProducesResponseType(typeof(Product), 200)]//201?
-        [Consumes("text/product")]//https://stackoverflow.com/questions/51158971/restrict-accepted-media-types-in-asp-net-core-controller-action
-        public async Task<IActionResult> Post(CreateProductRequest postRequest)
+        //RAW Data Content-Type: text/product;charset=UTF-8
+        [HttpPost(ApiRoutes.Product.Create)]
+        public async Task<IActionResult> Post()
         {
-            //var newProductId = 123;
-            var product = new Product
-            {
-                // Id = newProductId,
-                Name = postRequest.Name,
-                Description = postRequest.Description
-            };
+            var product = await _productService.ReadRequestBodyStream(Request.Body);
 
             try
             {
@@ -75,9 +65,7 @@ namespace MailBProductTask.Controllers.V1
                     return Ok(new ResponseNoName(400, message));
                 }
 
-                var response = await _productService.CreateProductAsync(product);
-
-                // var locationUri = _uriService.GetProductUri(product.Id.ToString());//static hlper method ?
+                var response = await _productService.CreateProductAsync(product);             
 
                 return Ok(new Response<ProductResponse>(201, response));
             }
@@ -86,25 +74,8 @@ namespace MailBProductTask.Controllers.V1
                 var message = ex.Message;
                 return BadRequest(new ResponseNoName(400, message));
             }
-            //return Created(locationUri, new Response<ProductResponse>(response));
+        } 
 
-        }
 
-        //RAW Data Test
-        [HttpPost]
-        [Route("api/v1/products2")]
-        public async Task<string> Post()
-        {
-            var retVal = await ReadRequestBodyStream();
-            return retVal;
-        }
-
-        private async Task<string> ReadRequestBodyStream()
-        {
-            using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
-            {
-                return await reader.ReadToEndAsync();
-            }
-        }
     }
 }

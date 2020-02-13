@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MailBProductTask.Services
@@ -33,10 +34,14 @@ namespace MailBProductTask.Services
                 lastProductId++;
                 product.Id = lastProductId;
                 products.Add(product);
-            }           
+            }
 
             File.WriteAllText(cPath, JsonConvert.SerializeObject(products));
-            return new ProductResponse { Id = product.Id,  Name = product.Name, Description = product.Description};
+            return new ProductResponse { Id = product.Id, Name = product.Name, Description = product.Description };
+            #region old
+
+
+
             /*
             string path = @"c:\temp\MyTest.txt";
             if (!File.Exists(path))
@@ -68,12 +73,31 @@ namespace MailBProductTask.Services
             }
             */
             //return await Task.Run(() => true);
+            #endregion
         }
 
         public async Task<Product> GetProductByIdAsync(int id)
         {
-            var retVal = await Task.Run(() => new Product { Id = id, Name = "StubName", Description = "StubDescription" });
-            return retVal;
+            string pathToTheFile = @"c:\temp";//Hot swap candidates
+            var fName = "MailBProductTask.txt";
+            CreateDirectory(pathToTheFile, fName);
+            var cPath = Path.Combine(pathToTheFile, fName);
+            var json = File.ReadAllText(cPath);
+            var products = await Task.Run(() => JsonConvert.DeserializeObject<List<Product>>(json));
+            if (products == null)
+            {
+                return new Product();
+            }
+
+            return products.SingleOrDefault(p => p.Id == id);
+        }
+
+        public async Task<Product> ReadRequestBodyStream(Stream requestBody)
+        {
+            using (var reader = new StreamReader(requestBody, Encoding.UTF8))
+            {
+                return JsonConvert.DeserializeObject<Product>(await reader.ReadToEndAsync());
+            }
         }
 
         private static void CreateDirectory(string fPath, string fName)
@@ -91,15 +115,6 @@ namespace MailBProductTask.Services
             }
         }
 
-        //public static void SaveToTxt()
-        //{
-        //    using (TextWriter tw = new StreamWriter(Path))
-        //    {
-        //        foreach (var item in Data.List)
-        //        {
-        //            tw.WriteLine(string.Format("Item: {0} - Cost: {1}", item.Name, item.Cost.ToString()));
-        //        }
-        //    }
-        //}
+
     }
 }

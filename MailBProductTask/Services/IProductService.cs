@@ -1,5 +1,6 @@
 ﻿using MailBProductTask.Models;
 using MailBProductTask.ViewModels;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace MailBProductTask.Services
@@ -8,5 +9,6 @@ namespace MailBProductTask.Services
     {
         Task<ProductResponse> CreateProductAsync(Product product);
         Task<Product> GetProductByIdAsync(int id);
+        Task<Product> ReadRequestBodyStream(Stream requestBody);
     }
 }
