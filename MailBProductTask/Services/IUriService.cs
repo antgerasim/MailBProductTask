@@ -1,13 +1,12 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace MailBProductTask.Services
 {
-    public interface IClientService
+    public interface IUriService
     {
-        Task<bool> Authenticate(long id);
+        Uri GetProductUri(string postId);
     }
 }

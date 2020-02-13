@@ -29,6 +29,7 @@ namespace MailBProductTask
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Services
             services.InstallServicesInAssembly(Configuration);
             services.AddCors();
             services.AddControllers();
@@ -69,3 +70,18 @@ namespace MailBProductTask
         }
     }
 }
+
+/*
+Hot Swapping Custom Configurations in ASP.net Core Using IOptionsSnapshot
+
+https://dotnetcoretutorials.com/2017/01/01/hot-swapping-custom-configurations-asp-net-core-using-ioptionssnapshot/
+
+Как работает конфигурация в.NET Core
+https://habr.com/ru/post/453416/
+
+Dynamic Connection String In .NET Core
+https://dzone.com/articles/dynamic-connection-string-in-net-core
+
+How to reload appsettings.json at runtime each time it changes in .NET core 1.1 console application?
+https://stackoverflow.com/questions/45064140/how-to-reload-appsettings-json-at-runtime-each-time-it-changes-in-net-core-1-1
+*/

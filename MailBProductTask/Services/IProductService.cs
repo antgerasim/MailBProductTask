@@ -1,15 +1,12 @@
-﻿using MailBProductTask.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using MailBProductTask.Models;
+using MailBProductTask.ViewModels;
 using System.Threading.Tasks;
 
 namespace MailBProductTask.Services
 {
-   public interface IProductService
+    public interface IProductService
     {
-
-        Task<Product> Get();
-        Task<int> Post();
+        Task<ProductResponse> CreateProductAsync(Product product);
+        Task<Product> GetProductByIdAsync(int id);
     }
 }

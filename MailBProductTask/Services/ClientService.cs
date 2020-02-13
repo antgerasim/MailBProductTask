@@ -1,4 +1,5 @@
-﻿using MailBProductTask.Domain;
+﻿
+using MailBProductTask.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace MailBProductTask.Services
         {
             //return await Task.Run(() => GetClient(clientId));
 
-            return await Task.Run(() => IsClientIdEven(clientId));
+            return await Task.Run(() => IsClientIdOdd(clientId));
 
         }
 
@@ -39,6 +40,18 @@ namespace MailBProductTask.Services
         private static bool IsClientIdEven(long clientId)
         {
             if (clientId % 2 == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private static bool IsClientIdOdd(long clientId)
+        {
+            if (clientId % 2 != 0)
             {
                 return true;
             }

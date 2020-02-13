@@ -1,4 +1,4 @@
-﻿using MailBProductTask.Domain;
+﻿
 using MailBProductTask.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -33,18 +33,18 @@ namespace MailBProductTask.Helpers
             try
             {
                 var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
-                var credentialBytes = Convert.FromBase64String(authHeader.Parameter);
-                var credentials = Encoding.UTF8.GetString(credentialBytes).Split(new[] { ':' }, 2);
+                //var credentialBytes = Convert.FromBase64String(authHeader.Parameter);
+                //var credentials = Encoding.UTF8.GetString(credentialBytes).Split(new[] { ':' }, 2);
 
                 //Encoding.UTF8.GetString(credentialBytes).Split(new[] { ':' }, 2);
                 //var clientId = credentials;//
-                clientId = 12L;//
+                clientId = Convert.ToInt64(authHeader.Parameter);//
 
                 authorize = await _clientService.Authenticate(clientId);
             }
             catch
             {
-                return AuthenticateResult.Fail("Недопустимый хедер авторизации");
+                return AuthenticateResult.Fail("При авторизации произошла ошибка");
             }
 
             if (!authorize)

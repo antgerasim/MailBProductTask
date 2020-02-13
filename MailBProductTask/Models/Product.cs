@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MailBProductTask.Models
 {
+    [Serializable]
     public class Product
     {
         [Key]
