@@ -33,12 +33,7 @@ namespace MailBProductTask.Helpers
             try
             {
                 var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
-                //var credentialBytes = Convert.FromBase64String(authHeader.Parameter);
-                //var credentials = Encoding.UTF8.GetString(credentialBytes).Split(new[] { ':' }, 2);
-
-                //Encoding.UTF8.GetString(credentialBytes).Split(new[] { ':' }, 2);
-                //var clientId = credentials;//
-                clientId = Convert.ToInt64(authHeader.Parameter);//
+                clientId = Convert.ToInt64(authHeader.Parameter);
 
                 authorize = await _clientService.Authenticate(clientId);
             }

@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace MailBProductTask.ViewModels
 {
-    public class Response<T> where T : ProductResponse
+    public class ResponseOk<T> where T : ProductResponse
     {
-
-        public Response(int statusCode, T response)
+        public ResponseOk(int statusCode, T response)
         {
             StatusCode = statusCode;
             Data = response;
@@ -17,9 +16,9 @@ namespace MailBProductTask.ViewModels
         public int StatusCode { get; set; }
     }
 
-    public class ResponseNoName
+    public class ResponseBad
     {
-        public ResponseNoName(int statusCode, string message) 
+        public ResponseBad(int statusCode, string message) 
         {
             StatusCode = statusCode;
             Message = message;
@@ -27,6 +26,4 @@ namespace MailBProductTask.ViewModels
         public string Message { get; set; }
         public int StatusCode { get; set; }
     }
-
-
 }

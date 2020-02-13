@@ -37,8 +37,6 @@ namespace MailBProductTask
             // configure basic authentication 
             services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

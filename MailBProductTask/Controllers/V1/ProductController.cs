@@ -13,8 +13,6 @@ using System.Xml.Serialization;
 
 namespace MailBProductTask.Controllers.V1
 {
-    // [Route("api/v1/[controller]")]
-    //[Route("api/v1/[controller]")]
     [Authorize]
     [ApiController]
     public class ProductController : ControllerBase
@@ -28,18 +26,17 @@ namespace MailBProductTask.Controllers.V1
             _uriService = uriService;
         }
 
-        // GET: api/Product/5
-        //[HttpGet("{id}", Name = "Get")]
         [AllowAnonymous]
-        [HttpGet(ApiRoutes.Product.Get)] //api/v1//product/{Id}
-        [ProducesResponseType(typeof(Product), 200)]//201?
+        [HttpGet(ApiRoutes.Product.Get)] //api/v1//product/{Id}        
         public async Task<IActionResult> Get([FromRoute]int id)
         {
+            try
+            {
             var product = await _productService.GetProductByIdAsync(id);
 
             if (product == null)
             {
-                return NotFound();
+                return NotFound("Продукт не найден");
             }
             var response = new ProductResponse
             {
@@ -48,7 +45,13 @@ namespace MailBProductTask.Controllers.V1
                 Description = product.Description
             };
 
-            return Ok(new Response<ProductResponse>(200, response));
+            return Ok(new ResponseOk<ProductResponse>(200, response));
+            }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
+                return BadRequest(new ResponseBad(400, message));
+            }
         }
 
         //RAW Data Content-Type: text/product;charset=UTF-8
@@ -62,20 +65,19 @@ namespace MailBProductTask.Controllers.V1
                 if (string.IsNullOrEmpty(product.Name))
                 {
                     var message = "Не указано название продукта";
-                    return Ok(new ResponseNoName(400, message));
+                    return Ok(new ResponseBad(400, message));
                 }
 
-                var response = await _productService.CreateProductAsync(product);             
+                var response = await _productService.CreateProductAsync(product);
 
-                return Ok(new Response<ProductResponse>(201, response));
+                return Ok(new ResponseOk<ProductResponse>(201, response));
             }
+
             catch (Exception ex)
             {
                 var message = ex.Message;
-                return BadRequest(new ResponseNoName(400, message));
+                return BadRequest(new ResponseBad(400, message));
             }
-        } 
-
-
+        }
     }
 }

@@ -18,7 +18,7 @@ namespace MailBProductTask.Services
             CreateDirectory(pathToTheFile, fName);
             var cPath = Path.Combine(pathToTheFile, fName);
             var json = File.ReadAllText(cPath);
-            var products = JsonConvert.DeserializeObject<List<Product>>(json);
+            var products = await Task.Run(() => JsonConvert.DeserializeObject<List<Product>>(json));
 
             var lastProductId = default(long);
             if (products == null)
@@ -38,42 +38,7 @@ namespace MailBProductTask.Services
 
             File.WriteAllText(cPath, JsonConvert.SerializeObject(products));
             return new ProductResponse { Id = product.Id, Name = product.Name, Description = product.Description };
-            #region old
-
-
-
-            /*
-            string path = @"c:\temp\MyTest.txt";
-            if (!File.Exists(path))
-            {
-                // Create a file to write to.
-                using (StreamWriter sw = File.CreateText(path))
-                {
-                    sw.WriteLine("Hello");
-                    sw.WriteLine("And");
-                    sw.WriteLine("Welcome");
-                }
-            }
-
-            using (StreamReader sr = File.OpenText(path))
-            {
-                string s;
-                while ((s = sr.ReadLine()) != null)
-                {
-                    Console.WriteLine(s);
-                }
-            }
-            */
-
-            /*
-            var logPath = Path.GetTempFileName();
-            using (var writer = File.CreateText(logPath))
-            {
-                writer.WriteLine("log message"); //or .Write(), if you wish
-            }
-            */
-            //return await Task.Run(() => true);
-            #endregion
+           
         }
 
         public async Task<Product> GetProductByIdAsync(int id)
@@ -114,7 +79,5 @@ namespace MailBProductTask.Services
                 File.CreateText(combined);
             }
         }
-
-
     }
 }
