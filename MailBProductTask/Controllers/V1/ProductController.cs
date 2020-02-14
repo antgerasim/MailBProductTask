@@ -57,9 +57,9 @@ namespace MailBProductTask.Controllers.V1
 
             try
             {
-                if (string.IsNullOrEmpty(product.Name))
+                if (string.IsNullOrEmpty(product.Name) || string.IsNullOrEmpty(product.Description))
                 {
-                    var message = "Не указано название продукта";
+                    var message = "Не указано название продукта или описание";
                     return Ok(new ResponseBad(400, message));
                 }
 
