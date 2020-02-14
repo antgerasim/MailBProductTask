@@ -1,19 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MailBProductTask.Helpers;
 using MailBProductTask.Installers;
-using MailBProductTask.Services;
+using MailBProductTask.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace MailBProductTask
 {
@@ -29,12 +22,16 @@ namespace MailBProductTask
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Hot Swapping appsettings.json option
+            services.AddOptions();
+            services.Configure<MailBOptions>(Configuration);
+
             //Services
             services.InstallServicesInAssembly(Configuration);
             services.AddCors();
             services.AddControllers();
 
-            // configure basic authentication 
+            // configure basic authentication
             services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
         }

@@ -1,6 +1,8 @@
 ﻿using MailBProductTask.Models;
 using MailBProductTask.ViewModels;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,13 +13,29 @@ namespace MailBProductTask.Services
 {
     public class ProductService : IProductService
     {
+        private readonly MailBOptions _snapshotOptions;
+
+        public ProductService(IOptionsSnapshot<MailBOptions>
+            snapshotOptionsAccessor)
+        {
+            _snapshotOptions = snapshotOptionsAccessor.Value;
+        }
+
         public async Task<ProductResponse> CreateProductAsync(Product product)
         {
-            string pathToTheFile = @"c:\temp";
-            var fName = "MailBProductTask.txt";
-            CreateDirectory(pathToTheFile, fName);
-            var cPath = Path.Combine(pathToTheFile, fName);
-            var json = File.ReadAllText(cPath);
+            string storagePath = GetStoragePath();
+            var json = default(string);
+            // if file not exist         
+            try
+            {
+                 json = File.ReadAllText(storagePath);
+            }
+            catch (Exception)
+            {
+                File.WriteAllText(storagePath, String.Empty);               
+            }
+            
+            json = File.ReadAllText(storagePath);
             var products = await Task.Run(() => JsonConvert.DeserializeObject<List<Product>>(json));
 
             var lastProductId = default(long);
@@ -36,22 +54,24 @@ namespace MailBProductTask.Services
                 products.Add(product);
             }
 
-            File.WriteAllText(cPath, JsonConvert.SerializeObject(products));
+            File.WriteAllText(storagePath, JsonConvert.SerializeObject(products));
             return new ProductResponse { Id = product.Id, Name = product.Name, Description = product.Description };
-           
         }
 
         public async Task<Product> GetProductByIdAsync(int id)
         {
-            string pathToTheFile = @"c:\temp";//Hot swap candidates
-            var fName = "MailBProductTask.txt";
-            CreateDirectory(pathToTheFile, fName);
-            var cPath = Path.Combine(pathToTheFile, fName);
-            var json = File.ReadAllText(cPath);
+            string storagePath = GetStoragePath();
+
+            if (!File.Exists(storagePath))
+            {
+                return null;
+            }
+
+            var json = File.ReadAllText(storagePath);
             var products = await Task.Run(() => JsonConvert.DeserializeObject<List<Product>>(json));
             if (products == null)
             {
-                return new Product();
+                return null;
             }
 
             return products.SingleOrDefault(p => p.Id == id);
@@ -65,19 +85,20 @@ namespace MailBProductTask.Services
             }
         }
 
-        private static void CreateDirectory(string fPath, string fName)
+        private string GetStoragePath()
         {
-            var targetDirectoryExists = Directory.Exists(fPath);
+            string fPath = _snapshotOptions.StorageFilePath;            
+            var fName = _snapshotOptions.StorageFileName;
+            CreateDirectory(fPath);
+            return Path.Combine(fPath, fName);
+        }
 
-            if (!targetDirectoryExists)
+        private static void CreateDirectory(string fPath)
+        {
+            if (!Directory.Exists(fPath))
             {
                 Directory.CreateDirectory(fPath);
             }
-            var combined = Path.Combine(fPath, fName);
-            if (!File.Exists(combined))
-            {
-                File.CreateText(combined);
-            }
-        }
+        }    
     }
 }

@@ -4,12 +4,9 @@ using MailBProductTask.Services;
 using MailBProductTask.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Options;
 using System;
-using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace MailBProductTask.Controllers.V1
 {
@@ -17,35 +14,33 @@ namespace MailBProductTask.Controllers.V1
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IProductService _productService;
-        private readonly IUriService _uriService;
+        private readonly IProductService _productService;       
 
-        public ProductController(IProductService productService, IUriService uriService)
+        public ProductController(IProductService productService)
         {
-            _productService = productService;
-            _uriService = uriService;
+            _productService = productService;            
         }
 
         [AllowAnonymous]
-        [HttpGet(ApiRoutes.Product.Get)] //api/v1//product/{Id}        
+        [HttpGet(ApiRoutes.Product.Get)] //api/v1//product/{Id}
         public async Task<IActionResult> Get([FromRoute]int id)
         {
             try
             {
-            var product = await _productService.GetProductByIdAsync(id);
+                var product = await _productService.GetProductByIdAsync(id);
 
-            if (product == null)
-            {
-                return NotFound("Продукт не найден");
-            }
-            var response = new ProductResponse
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description
-            };
+                if (product == null)
+                {
+                    return NotFound("Продукт не найден");
+                }
+                var response = new ProductResponse
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Description = product.Description
+                };
 
-            return Ok(new ResponseOk<ProductResponse>(200, response));
+                return Ok(new ResponseOk<ProductResponse>(200, response));
             }
             catch (Exception ex)
             {
@@ -72,7 +67,6 @@ namespace MailBProductTask.Controllers.V1
 
                 return Ok(new ResponseOk<ProductResponse>(201, response));
             }
-
             catch (Exception ex)
             {
                 var message = ex.Message;
