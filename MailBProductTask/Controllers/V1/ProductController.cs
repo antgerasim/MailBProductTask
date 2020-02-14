@@ -22,7 +22,7 @@ namespace MailBProductTask.Controllers.V1
         }
 
         [AllowAnonymous]
-        [HttpGet(ApiRoutes.Product.Get)] //api/v1//product/{Id}
+        [HttpGet(ApiRoutes.Product.Get)] 
         public async Task<IActionResult> Get([FromRoute]int id)
         {
             try
