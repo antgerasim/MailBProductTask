@@ -9,12 +9,12 @@ namespace MailBProductTask.Helpers
 {
     public static class Mapping
     {
-        public static ProductResponse MapToResponse(this Product product)
+        public static ProductResponseVm MapToResponseVm(this Product product)
         {
-            return product == null ? null : new ProductResponse { Id = product.Id, Name = product.Name, Description = product.Description };
+            return product == null ? null : new ProductResponseVm { Id = product.Id, Name = product.Name, Description = product.Description };
         }
 
-        public static Product MapToEntity(this ProductRequest productRequest)
+        public static Product MapToEntity(this ProductRequestVm productRequest)
         {
             return productRequest == null ? null : new Product { Name = productRequest.Name, Description = productRequest.Description };
         }

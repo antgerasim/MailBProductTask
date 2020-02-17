@@ -1,6 +1,7 @@
 ﻿using MailBProductTask.Helpers;
 using MailBProductTask.Models;
 using MailBProductTask.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
@@ -28,7 +29,7 @@ namespace MailBProductTask.Services
             _descriptionValidator = descriptionValidator;
         }
 
-        public async Task<IResponse> CreateProductAsync(ProductRequest productRequest)
+        public async Task<IResponse> CreateProductAsync(ProductRequestVm productRequest)
         {
             var product = productRequest.MapToEntity();
             string storagePath = GetStoragePath();
@@ -74,10 +75,10 @@ namespace MailBProductTask.Services
                 products.Add(product);
             }
             File.WriteAllText(storagePath, JsonConvert.SerializeObject(products));
-            return new ResponseOk<ProductResponse>(201, product.MapToResponse());
+            return new ResponseOk<ProductResponseVm>(201, product.MapToResponseVm());
         }
 
-        public async Task<ProductResponse> GetProductByIdAsync(int id)
+        public async Task<ProductResponseVm> GetProductByIdAsync(int id)
         {
             string storagePath = GetStoragePath();
 
@@ -92,16 +93,26 @@ namespace MailBProductTask.Services
             {
                 return null;
             }
-            return products.SingleOrDefault(p => p.Id == id).MapToResponse();
+            return products.SingleOrDefault(p => p.Id == id).MapToResponseVm();
         }
 
-        public async Task<ProductRequest> ReadRequestBodyStream(Stream requestBody)
+        public async Task<ProductRequestVm> ReadRequestBodyStream(HttpRequest request)
         {
-            using (var reader = new StreamReader(requestBody, Encoding.UTF8))
+            request.EnableBuffering();
+
+            using (var reader = new StreamReader(request.Body, Encoding.UTF8))
             {
-                var readResult = await reader.ReadToEndAsync();
-                var strArray = readResult.Split("~").Select(str => str.Substring(str.IndexOf("=") + 1)).ToArray();
-                return new ProductRequest { Name = strArray[0], Description = strArray[1] };
+                try
+                {
+                    return JsonConvert.DeserializeObject<ProductRequestVm>(await reader.ReadToEndAsync());
+                }
+                catch (Exception)
+                {
+                    request.Body.Position = 0;
+                    var readResult = await reader.ReadToEndAsync();
+                    var strArray = readResult.Split("~").Select(str => str.Substring(str.IndexOf("=") + 1)).ToArray();
+                    return new ProductRequestVm { Name = strArray[0], Description = strArray[1] };
+                }
             }
         }
 

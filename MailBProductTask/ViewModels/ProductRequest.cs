@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MailBProductTask.ViewModels
 {
-    public class ProductRequest
+    public class ProductRequestVm
     {
         public string Name { get; set; }
         public string Description { get; set; }
