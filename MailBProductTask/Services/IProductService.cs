@@ -7,8 +7,8 @@ namespace MailBProductTask.Services
 {
     public interface IProductService
     {
-        Task<ProductResponse> CreateProductAsync(Product product);
-        Task<Product> GetProductByIdAsync(int id);
-        Task<Product> ReadRequestBodyStream(Stream requestBody);
+        Task<IResponse> CreateProductAsync(ProductRequest product);
+        Task<ProductResponse> GetProductByIdAsync(int id);
+        Task<ProductRequest> ReadRequestBodyStream(Stream requestBody);
     }
 }

@@ -1,13 +1,18 @@
-﻿namespace MailBProductTask.ViewModels
+﻿using Newtonsoft.Json;
+using System;
+using System.Runtime.Serialization;
+
+namespace MailBProductTask.ViewModels
 {
-    public class ResponseBad
+    
+    public class ResponseBad<T> : IResponse 
     {
-        public ResponseBad(int statusCode, string message) 
+        public ResponseBad(int statusCode, T message) 
         {
             StatusCode = statusCode;
             Message = message;
-        }
-        public string Message { get; set; }
+        }       
+        public T Message { get; set; }
         public int StatusCode { get; set; }
     }
 }

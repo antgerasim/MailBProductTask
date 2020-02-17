@@ -1,4 +1,5 @@
-﻿using MailBProductTask.Helpers.Tweetbook.Contracts.V1;
+﻿using MailBProductTask.Helpers;
+using MailBProductTask.Helpers.Tweetbook.Contracts.V1;
 using MailBProductTask.Models;
 using MailBProductTask.Services;
 using MailBProductTask.ViewModels;
@@ -6,6 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace MailBProductTask.Controllers.V1
@@ -27,25 +31,19 @@ namespace MailBProductTask.Controllers.V1
         {
             try
             {
-                var product = await _productService.GetProductByIdAsync(id);
+                var productResp = await _productService.GetProductByIdAsync(id);
 
-                if (product == null)
+                if (productResp == null)
                 {
                     return NotFound("Продукт не найден");
                 }
-                var response = new ProductResponse
-                {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Description = product.Description
-                };
 
-                return Ok(new ResponseOk<ProductResponse>(200, response));
+                return Ok(new ResponseOk<ProductResponse>(200, productResp));
             }
             catch (Exception ex)
             {
                 var message = ex.Message;
-                return BadRequest(new ResponseBad(400, message));
+                return BadRequest(new ResponseBad<string>(400, message));
             }
         }
 
@@ -57,20 +55,13 @@ namespace MailBProductTask.Controllers.V1
 
             try
             {
-                if (string.IsNullOrEmpty(product.Name) || string.IsNullOrEmpty(product.Description))
-                {
-                    var message = "Не указано название продукта или описание";
-                    return Ok(new ResponseBad(400, message));
-                }
-
                 var response = await _productService.CreateProductAsync(product);
-
-                return Ok(new ResponseOk<ProductResponse>(201, response));
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 var message = ex.Message;
-                return BadRequest(new ResponseBad(400, message));
+                return BadRequest(new ResponseBad<string>(400, message));
             }
         }
     }
